@@ -1,26 +1,38 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <fnctl.h>
-#include <time.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+
+unsigned int genRan() {
+
+  int fd = open("/dev/random", O_RDONLY);
+
+  if (fd < 0) {
+    printf("File didn't open");
+  }
+
+  unsigned int * buffer = malloc(sizeof(unsigned int));
+
+  read(fd, buffer, sizeof(buffer));
+
+  return *buffer;
+}
+
+
+
 
 
 int main() {
-  
-  int fd = open("/dev/random", O_RDONLY);
-  int i;
-  int *buffer;
-  srand(time(NULL));
-  read(fd, buffer, rand() % 15);
-  
-  int ranarr[10];
-  for (i = 0; i < 10; i++) {
-    int length = rand() % 15;
-    int j = 0;
-    for (; j < length; j++) {
-      
-      
-    
+
+  printf("Generating random numbers:\n");
+  int j;
+  for (j = 0; j < 10; j++) {
+    printf("random %d: %u\n", j, genRan());
+  }
+
+
+
 
   return 0;
 }
-
