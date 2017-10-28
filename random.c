@@ -2,21 +2,26 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+#include <string.h>
 
 
 unsigned int genRan() {//generate random unsigned int from /dev/random
 
-  int fd = open("/dev/random", O_RDONLY);
+  int fd;
 
-  if (fd < 0) {
-    printf("File didn't open");
+  fd = open("/dev/random", O_RDONLY);
+
+  unsigned int * buffer = malloc(sizeof(unsigned int));//write to this
+
+  int nbytes = read(fd, buffer, sizeof(buffer));
+
+  if (nbytes < 0) {//if something went wrong
+    printf("rand num didn't work\n");
+    printf("%s\n", strerror(errno));
   }
 
-  unsigned int * buffer = malloc(sizeof(unsigned int));
-
-  read(fd, buffer, sizeof(buffer));
-
-  unsigned int val = *buffer;
+  unsigned int val = *buffer;//temp storage to free malloc'd
 
   free(buffer);
 
@@ -30,11 +35,11 @@ int main() {
 
   printf("\nGenerating random numbers:\n");
 
-  unsigned int randarr[10];//create array
+  unsigned int randarr[10];//create array of unsigned ints
 
   int i;
   for (i = 0; i < 10; i++){
-    randarr[i] = genRan();//populate array
+    randarr[i] = genRan();//populate array with random numbers
   }
 
 
@@ -42,13 +47,20 @@ int main() {
     printf("\trandom %d: %u\n", i, randarr[i]);//print array
   }
 
-  //write array to file:
+  //write array to file random_nums:
 
   printf("\nWriting numbers to file...\n");
 
-  int fd_write = open("random_nums", O_CREAT | O_RDWR, 0644);//create file to write to
+  int fd_write;
 
-  write(fd_write, randarr, sizeof(randarr));
+  fd_write = open("random_nums", O_CREAT | O_RDWR, 0644);//create file to write to, allow us to read and write
+
+  int nbytes = write(fd_write, randarr, sizeof(randarr));
+
+  if (nbytes < 0) {//if something went wrong
+    printf("write didn't work\n");
+    printf("%s\n", strerror(errno));
+  }
 
   close(fd_write);
 
@@ -56,17 +68,25 @@ int main() {
 
   printf("\nReading numbers from file...\n\n");
 
-  int fd_read = open("random_nums", O_RDONLY);//open file that was written
+  int fd_read;
+
+  fd_read = open("random_nums", O_RDONLY);//open file that was written
 
   unsigned int randarr_check[10];
 
-  read(fd_read, randarr_check, sizeof(randarr_check));//read to new array
+  nbytes = read(fd_read, randarr_check, sizeof(randarr_check));//read to new array
+
+  if (nbytes < 0) {//if something went wrong
+    printf("read into array didn't work\n");
+    printf("%s\n", strerror(errno));
+  }
 
   printf("Verification that written values were the same:\n\n");
 
   for (i = 0; i < 10; i++){
     printf("\trandom %d: %u\n", i, randarr_check[i]);//print array
   }
+
 
   return 0;
 }
