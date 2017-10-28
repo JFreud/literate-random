@@ -26,9 +26,17 @@ unsigned int genRan() {
 int main() {
 
   printf("Generating random numbers:\n");
+
+  unsigned int randarr[10];
+
+  int i;
+  for (i = 0; i < 10; i++){
+    randarr[i] = genRan();
+  }
+
   int j;
   for (j = 0; j < 10; j++) {
-    printf("random %d: %u\n", j, genRan());
+    printf("random %d: %u\n", j, randarr[j]);
   }
 
 
