@@ -81,7 +81,7 @@ int main() {
     printf("%s\n", strerror(errno));
   }
 
-  printf("Verification that written values were the same:\n\n");
+  printf("Verification that written values were the same:\n");
 
   for (i = 0; i < 10; i++){
     printf("\trandom %d: %u\n", i, randarr_check[i]);//print array
