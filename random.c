@@ -39,14 +39,14 @@ int main() {
 
 
   for (i = 0; i < 10; i++) {
-    printf("random %d: %u\n", i, randarr[i]);//print array
+    printf("\trandom %d: %u\n", i, randarr[i]);//print array
   }
 
   //write array to file:
 
   printf("\nWriting numbers to file...\n");
 
-  int fd_write = open("random_nums", O_CREAT, 0644);//create file to write to
+  int fd_write = open("random_nums", O_CREAT | O_RDWR, 0644);//create file to write to
 
   write(fd_write, randarr, sizeof(randarr));
 
@@ -62,9 +62,10 @@ int main() {
 
   read(fd_read, randarr_check, sizeof(randarr_check));//read to new array
 
+  printf("Verification that written values were the same:\n\n");
 
   for (i = 0; i < 10; i++){
-    printf("random %d: %u\n", i, randarr_check[i]);//print array
+    printf("\trandom %d: %u\n", i, randarr_check[i]);//print array
   }
 
   return 0;
